@@ -46,7 +46,7 @@ def chrome_session(
     if proxy is not None:
         if isinstance(proxy, dict):
             proxy_http = proxy["http"]
-            proxy = re.sub("http://", "", proxy)
+            proxy = re.sub("http://", "", proxy["http"])
         elif isinstance(proxy, str):
             proxy_http = "http://" + proxy
 

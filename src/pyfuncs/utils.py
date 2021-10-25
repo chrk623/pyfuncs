@@ -120,11 +120,41 @@ def to_int(x):
     return None if x is None else int(x)
 
 
+def camel_to_underscore(df):
+    original_cols = list(df.columns)
+    new_cols = [re.sub("([A-Z])", "_\\1", x).lower() for x in original_cols]
+    rename_dict = {old: new for old, new in zip(original_cols, new_cols)}
+    df = df.rename(columns=rename_dict)
+    
+    return df
+
+
 def split_list(x, n):
     x = np.array(x)
     x = np.array_split(x, n)
     x = [_.tolist() for _ in x]
     return x
+
+
+def extract_dl(dl, return_df=False)
+    out = []
+    for d in dl:
+        out.append(d)
+    
+    out_dict = {k: v for k, v in out[0].items()}
+    for i, d in enumerate(out[1:]):
+        for k, v in d.items():
+            if len(v.shape) == 1:
+                out_dict[k] = torch.cat([out_dict[k], v])
+            else:
+                out_dict[k] = torch.vstack([out_dict[k], v])
+    
+    out_dict = {k: v.numpy() for k, v in out_dict.items()}
+    
+    if return_df:
+        return pd.DataFrame({k: v.tolist() for k, v in out_dict.items()})
+     
+    return out_dict
 
 
 def check_chrome():
