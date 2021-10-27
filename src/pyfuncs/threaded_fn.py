@@ -57,5 +57,3 @@ class ThreadedFn:
 
     def fn(self, d):
         return d["x"] + d["y"]
-
-

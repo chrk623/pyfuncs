@@ -1,83 +1,83 @@
 import os
-import re
-from selenium import webdriver as sw
-from seleniumwire import webdriver as sww
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from .sel_base import ChromeBase
+from seleniumwire.webdriver import Chrome as SWW
+from selenium.webdriver.chrome.webdriver import WebDriver as SW
+
+_HOME = os.path.expanduser("~")
 
 
-HOME = os.path.expanduser("~")
+class ChromeSession(SW, ChromeBase):
+    def __init__(
+            self,
+            executable_path=os.path.join(_HOME, "gdrive/tools/chromedriver_92_linux"),
+            proxy=None,
+            headless=False,
+            disable_image=False,
+            tz="America/Los_Angeles",  # set timezone to PST, earliest in US
+            *args,
+            **kwargs
+    ):
+        ChromeBase.__init__(
+            self=self,
+            proxy=proxy,
+            headless=headless,
+            disable_image=disable_image,
+        )
+        super().__init__(
+            executable_path=executable_path,
+            options=self.options,
+            desired_capabilities={'browserName': 'chrome', 'goog:loggingPrefs': {'performance': 'ALL'}},
+            *args,
+            **kwargs
+        )
+        self.execute_cdp_cmd(
+            "Emulation.setTimezoneOverride",
+            {"timezoneId": tz}
+        )
 
 
-def chrome_session(
-        proxy=None,
-        headless=False,
-        wire=False,
-        tz="America/Los_Angeles", # set timezone to PST, earliest in US
-        exec_path=os.path.join(HOME, "gdrive/tools/chromedriver_92_linux")
-):
-    # options = {
-    #     'proxy': {
-    #         'http': 'http://username:password@host:port',
-    #         'https': 'https://username:password@host:port',
-    #         'no_proxy': 'localhost,127.0.0.1,dev_server:8080'
-    #     }
-    # }
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    # init options
-    chrome_options = sw.ChromeOptions()
+class ChromeWireSession(SWW, ChromeBase):
+    proxy = None
+    wire_options = {}
 
-    # set regular settings
-    prefs = {"profile.managed_default_content_settings.images": 2}
-    chrome_options.add_experimental_option("prefs", prefs)
-    chrome_options.add_argument("--window-size=%s" % "1920,1080")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+    def __init__(
+            self,
+            executable_path=os.path.join(_HOME, "gdrive/tools/chromedriver_92_linux"),
+            proxy=None,
+            headless=False,
+            disable_image=False,
+            tz="America/Los_Angeles",  # set timezone to PST, earliest in US
+            *args,
+            **kwargs
+    ):
+        ChromeBase.__init__(
+            self=self,
+            proxy=proxy,
+            headless=headless,
+            disable_image=disable_image,
+        )
+        super().__init__(
+            executable_path=executable_path,
+            options=self.options,
+            desired_capabilities={'browserName': 'chrome', 'goog:loggingPrefs': {'performance': 'ALL'}},
+            *args,
+            **kwargs
+        )
+        self.execute_cdp_cmd(
+            "Emulation.setTimezoneOverride",
+            {"timezoneId": tz}
+        )
 
+    def _set_proxy(self):
+        if self.proxy:
+            proxy = self.proxy
+            if isinstance(proxy, dict):
+                proxy = proxy["http"]
 
-    capabilities = DesiredCapabilities.CHROME
-    capabilities["goog:loggingPrefs"] = {"performance": "ALL"}  # chromedriver 75+
-
-    # headless mode
-    if headless:
-        chrome_options.add_argument("--headless")
-
-    options=None
-    # set proxy
-    if proxy is not None:
-        if isinstance(proxy, dict):
-            proxy_http = proxy["http"]
-            proxy = re.sub("http://", "", proxy["http"])
-        elif isinstance(proxy, str):
-            proxy_http = "http://" + proxy
-
-        if wire:
-            options = {
+            self.wire_options = {
                 "proxy": {
-                    "http": proxy_http,
-                    "https": proxy_http,
+                    "http": proxy,
+                    "https": proxy,
                     "no_proxy": "localhost,127.0.0.1"
                 }
             }
-        else:
-            chrome_options.add_argument(f"--proxy-server={proxy}")
-
-    if wire:
-        w = sww.Chrome(
-            os.path.join(dir_path, exec_path),
-            options=chrome_options,
-            desired_capabilities=capabilities,
-            seleniumwire_options=options
-        )
-    else:
-        w = sw.Chrome(
-            os.path.join(dir_path, exec_path),
-            options=chrome_options,
-            desired_capabilities=capabilities
-        )
-
-    w.execute_cdp_cmd(
-        "Emulation.setTimezoneOverride",
-        {"timezoneId": tz}
-    )
-
-    return w
