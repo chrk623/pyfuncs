@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import requests as rq
 import multiprocessing
+from datetime import datetime, timedelta
 
 
 HOME = os.path.expanduser("~")
@@ -136,7 +137,7 @@ def split_list(x, n):
     return x
 
 
-def extract_dl(dl, return_df=False)
+def extract_dl(dl, return_df=False):
     out = []
     for d in dl:
         out.append(d)
