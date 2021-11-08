@@ -16,7 +16,7 @@ class ThreadedFn:
         self.inputs = inputs
         self._prepare_inputs()
         self._prepare_outputs()
-        self._init_logger(num_threads)
+        self._init_logger()
 
     def _init_logger(self):
         logging.basicConfig(level=logging.INFO, format="[%(asctime)s| %(levelname)s| %(threadName)s] %(message)s")
