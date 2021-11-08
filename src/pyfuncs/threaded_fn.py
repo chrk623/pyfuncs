@@ -56,7 +56,7 @@ class ThreadedFn:
         inputs = self.inputs[thread_num]
         len_inputs = len(inputs)
         out = []
-        for i, _input in inputs:
+        for i, _input in enumerate(inputs):
             self.logger.info(f"{i + 1}/{len_inputs}")
             o = self.fn(_input)
             out.append(o)
