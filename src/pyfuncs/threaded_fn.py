@@ -16,7 +16,12 @@ class ThreadedFn:
         self.inputs = inputs
         self._prepare_inputs()
         self._prepare_outputs()
+        self._init_logger(num_threads)
 
+    def _init_logger(self):
+        logging.basicConfig(level=logging.INFO, format="[%(asctime)s| %(levelname)s| %(threadName)s] %(message)s")
+        self.logger = logging
+        
     def _prepare_inputs(self):
         inputs = np.array_split(self.inputs, self.num_threads)
         inputs = [x.tolist() for x in inputs]
@@ -36,7 +41,7 @@ class ThreadedFn:
     def run(self):
         threads = []
         for i in range(self.num_threads):
-            # self.logger.info(f"Starting thread {i}")
+            self.logger.info(f"Starting thread {i}")
             t = threading.Thread(target=self._run, args=(i,))
             threads.append(t)
             t.start()
@@ -48,9 +53,11 @@ class ThreadedFn:
 
     def _run(self, thread_num):
         inputs = self.inputs[thread_num]
+        len_inputs = len(inputs)
         out = []
-        for i in inputs:
-            o = self.fn(i)
+        for i, _input in inputs:
+            self.logger.info(f"{i + 1}/{len_inputs}")
+            o = self.fn(_input)
             out.append(o)
 
         self.outputs[thread_num] = out
