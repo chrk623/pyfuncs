@@ -185,7 +185,7 @@ def date_range_days(start, end, by_day=0):
     return out
 
 
-def date_range_days(start, end, by_months=1, force_start_at_day1=False, force_end_at_eom=False):
+def date_range_months(start, end, by_months=1, force_start_at_day1=False, force_end_at_eom=False):
     """
     :param start: start datetime
     :param end: end datetime
