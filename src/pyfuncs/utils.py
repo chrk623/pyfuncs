@@ -163,3 +163,88 @@ def check_chrome():
         f"chrome version: {chrome_version}"
         f"https://chromedriver.chromium.org/downloads"
     )
+
+
+def date_range_days(start, end, by_day=0):
+    # by_days = 0 means
+    if by_day is None:
+        return [(start, end)]
+    out = []
+    by = timedelta(days=by_day)
+
+    while (start + by) < end:
+        out.append((start, start + by))
+        start = start + by + timedelta(days=1)
+
+    if len(out) == 0:
+        return [(start, end)]
+    elif out[-1][1] != end:
+        out.append((start, end))
+
+    return out
+
+
+def date_range_days(start, end, by_months=1, force_start_at_day1=False, force_end_at_eom=False):
+    """
+    :param start: start datetime
+    :param end: end datetime
+    :param by_months: months apart between each interval
+    :param force_start_at_day1: force first start date to start at day 1
+        True: start = "2021-12-05" then first start day will be "2021-12-01"
+        False: opposite to above start = "2021-12-05" then first start day will the same
+    :param force_end_at_eom:
+        True: output range will be the end of the month for end's date
+            i.e. end = "2021-12-05" then last end will be "2021-12-31"
+        False: opposite to above
+            i.e. end = "2021-12-05" then last end will be "the same
+    :return:
+    """
+    if force_start_at_day1:
+        start = datetime(
+            year=start.year,
+            month=start.month,
+            day=1
+        )
+
+    out_starts = [start]
+    out_ends = []
+    # compute out_start
+    while True:
+        # next date's starting month
+        next_month = out_starts[-1].month + 1
+        # if + 1 = 13 then its next jan
+        next_month = 1 if next_month > 12 else next_month
+        # next date's starting year
+        next_year = out_starts[-1].year
+        # if next month = 1 then its next year
+        next_year = next_year + 1 if next_month == 1 else next_year
+        next_start = datetime(
+            year=next_year,
+            month=next_month,
+            day=1
+        )
+        out_starts.append(next_start)
+        if next_month == end.month and next_year == end.year:
+            break
+
+    # compute out_end
+    for out_start in out_starts:
+        # next month of the current date
+        next_month = out_start.month + 1
+        next_month = 1 if next_month > 12 else next_month
+        # ending date is current 1st of next month - 1 day
+        end_date = datetime(
+            year=out_start.year,
+            month=next_month,
+            day=1
+        ) - timedelta(days=1)
+        out_ends.append(end_date)
+
+    if not force_end_at_eom:
+        out_ends[-1] = end
+
+    out = []
+    for i in range(0, len(out_starts), by_months):
+        out.append((out_starts[i], out_ends[i]))
+
+    return out
