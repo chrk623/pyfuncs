@@ -2,6 +2,7 @@ import re
 import time
 import json
 from selenium import webdriver as sw
+from selenium.webdriver.common.keys import Keys
 
 
 class ChromeBase:
@@ -57,6 +58,11 @@ class ChromeBase:
                 out.append(action())
 
         return out
+
+    def hit_key_n_times(self, key="PAGE_DOWN", times=5, target_xpath="//html"):
+        tag = self.find_element("xpath", target_xpath)
+        for _ in range(times):
+            html_tag.send_keys(Keys.__dict__[key])
 
     def fetch_network_log(self):
         out = []
