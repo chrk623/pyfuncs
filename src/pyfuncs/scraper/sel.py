@@ -1,9 +1,56 @@
 import os
+from ..utils import chrome_main_version
 from .sel_base import ChromeBase
+import undetected_chromedriver.v2 as uc
 from seleniumwire.webdriver import Chrome as SWW
 from selenium.webdriver.chrome.webdriver import WebDriver as SW
 
 _HOME = os.path.expanduser("~")
+
+
+class ChromeUDSession(uc.Chrome, ChromeBase):
+    def __init__(
+            self,
+            version_main=None,
+            proxy=None,
+            headless=False,
+            disable_image=False,
+            tz="America/Los_Angeles",  # set timezone to PST, earliest in US
+            *args,
+            **kwargs
+    ):
+        ChromeBase.__init__(
+            self=self,
+            proxy=proxy,
+            headless=False,
+            disable_image=disable_image,
+        )
+
+        if version_main is None:
+            version_main = chrome_main_version()
+
+        options = uc.ChromeOptions()
+        old_options_dict = options.__dict__
+        options.__dict__["_arguments"].extend(old_options_dict["_arguments"])
+        options.__dict__["_experimental_options"].update(old_options_dict["_experimental_options"])
+        # disable welcome message
+        options.add_argument('--no-first-run')
+        options.add_argument('--no-service-autorun')
+        options.add_argument('--no-default-browser-check')
+        options.add_argument('--password-store=basic')
+
+        super().__init__(
+            version_main=version_main,
+            options=options,
+            headless=headless,
+            desired_capabilities={'browserName': 'chrome', 'goog:loggingPrefs': {'performance': 'ALL'}},
+            *args,
+            **kwargs
+        )
+        self.execute_cdp_cmd(
+            "Emulation.setTimezoneOverride",
+            {"timezoneId": tz}
+        )
 
 
 class ChromeSession(SW, ChromeBase):

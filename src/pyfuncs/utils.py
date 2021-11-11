@@ -5,12 +5,10 @@ import numpy as np
 import pandas as pd
 import requests as rq
 import multiprocessing
-from datetime import datetime, timedelta
-
+from datetime import datetime
 
 HOME = os.path.expanduser("~")
 _RETURN_NONE = (lambda: None).__code__.co_code
-
 
 minimal_headers = {
     "Connection": "keep-alive",
@@ -126,7 +124,7 @@ def camel_to_underscore(df):
     new_cols = [re.sub("([A-Z])", "_\\1", x).lower() for x in original_cols]
     rename_dict = {old: new for old, new in zip(original_cols, new_cols)}
     df = df.rename(columns=rename_dict)
-    
+
     return df
 
 
@@ -141,7 +139,7 @@ def extract_dl(dl, return_df=False):
     out = []
     for d in dl:
         out.append(d)
-    
+
     out_dict = {k: v for k, v in out[0].items()}
     for i, d in enumerate(out[1:]):
         for k, v in d.items():
@@ -149,12 +147,12 @@ def extract_dl(dl, return_df=False):
                 out_dict[k] = torch.cat([out_dict[k], v])
             else:
                 out_dict[k] = torch.vstack([out_dict[k], v])
-    
+
     out_dict = {k: v.numpy() for k, v in out_dict.items()}
-    
+
     if return_df:
         return pd.DataFrame({k: v.tolist() for k, v in out_dict.items()})
-     
+
     return out_dict
 
 
@@ -164,6 +162,11 @@ def check_chrome():
         f"chrome version: {chrome_version}"
         f"https://chromedriver.chromium.org/downloads"
     )
+
+
+def chrome_main_version():
+    chrome_version = os.popen("google-chrome --product-version").read()
+    return int(chrome_version.split(".")[0])
 
 
 def date_range_days(start, end, by_day=0):
@@ -185,7 +188,7 @@ def date_range_days(start, end, by_day=0):
     return out
 
 
-def date_range_months(start, end, by_months=1, force_start_at_day1=False, force_end_at_eom=False):
+def date_range_days(start, end, by_months=1, force_start_at_day1=False, force_end_at_eom=False):
     """
     :param start: start datetime
     :param end: end datetime
