@@ -30,7 +30,7 @@ class ChromeUDSession(uc.Chrome, ChromeBase):
             version_main = chrome_main_version()
 
         options = uc.ChromeOptions()
-        old_options_dict = options.__dict__
+        old_options_dict = self.options.__dict__
         options.__dict__["_arguments"].extend(old_options_dict["_arguments"])
         options.__dict__["_experimental_options"].update(old_options_dict["_experimental_options"])
         # disable welcome message
@@ -128,3 +128,4 @@ class ChromeWireSession(SWW, ChromeBase):
                     "no_proxy": "localhost,127.0.0.1"
                 }
             }
+
