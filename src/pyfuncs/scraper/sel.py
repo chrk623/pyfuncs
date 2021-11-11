@@ -23,7 +23,7 @@ class ChromeUDSession(uc.Chrome, ChromeBase):
             self=self,
             proxy=proxy,
             headless=False,
-            disable_image=disable_image,
+            disable_image=False,
         )
 
         if version_main is None:
@@ -32,12 +32,15 @@ class ChromeUDSession(uc.Chrome, ChromeBase):
         options = uc.ChromeOptions()
         old_options_dict = self.options.__dict__
         options.__dict__["_arguments"].extend(old_options_dict["_arguments"])
-        options.__dict__["_experimental_options"].update(old_options_dict["_experimental_options"])
+
+        if disable_image:
+            options.add_argument('--blink-settings=imagesEnabled=false')
+
         # disable welcome message
-        options.add_argument('--no-first-run')
-        options.add_argument('--no-service-autorun')
-        options.add_argument('--no-default-browser-check')
-        options.add_argument('--password-store=basic')
+        options.add_argument("--no-first-run")
+        options.add_argument("--no-service-autorun")
+        options.add_argument("--no-default-browser-check")
+        options.add_argument("--password-store=basic")
 
         super().__init__(
             version_main=version_main,
