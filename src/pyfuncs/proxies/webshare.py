@@ -51,11 +51,21 @@ class Webshare:
         return r.status_code
 
     def fetch_proxies(self, region="US"):
-        r = rq.get(
-            "https://proxy.webshare.io/api/proxy/list/?page=1&countries=" + region,
-            headers=self.headers
-        )
-        return r.json()["results"]
+        page = 1
+        proxies = []
+        next_page = True
+
+        while next_page is not None:
+            r = rq.get(
+                f"https://proxy.webshare.io/api/proxy/list/?page={page}&countries={region}",
+                headers=self.headers
+            )
+            j = r.json()
+            proxies.extend(j["results"])
+            next_page = j["next"]
+            page += 1
+
+        return proxies
 
     @retry(tries=5, delay=2)
     def fetch_public_ip(self):
