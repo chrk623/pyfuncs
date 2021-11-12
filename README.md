@@ -4,5 +4,5 @@ Handy functions.
 
 ## Install
 ```bash
-pip install git+https://github.com/chrk623/pyfuncs.git
+pip install -U git+https://github.com/chrk623/pyfuncs.git
 ```
