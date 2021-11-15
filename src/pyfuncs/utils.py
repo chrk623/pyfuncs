@@ -1,3 +1,4 @@
+import re
 import os
 import json
 import logging
@@ -252,3 +253,46 @@ def date_range_days(start, end, by_months=1, force_start_at_day1=False, force_en
         out.append((out_starts[i], out_ends[i]))
 
     return out
+
+
+def unescape(s):
+    s = s.replace("&lt;", "<")
+    s = s.replace("&gt;", ">")
+    # this has to be last:
+    s = s.replace("&amp;", "&")
+    return s
+
+
+def clean_html(html, remove_ref = True):
+    """
+    Remove HTML markup from the given string.
+    :param html: the HTML string to be cleaned
+    :param remove_ref: try to remove the reference, remove
+        all text after the last occurance of the word [R|r]eference
+    :type html: str
+    :rtype: str
+    """
+    cleaned = html.strip()
+    cleaned = re.sub(" <sub> ", "", cleaned)
+    cleaned = re.sub(" </sub> ", " ", cleaned)
+    cleaned = re.sub(" <sup> ", "", cleaned)
+    cleaned = re.sub(" </sup> ", " ", cleaned)
+    cleaned = re.sub(" <em> ", "", cleaned)
+    cleaned = re.sub(" </em> ", " ", cleaned)
+
+    # First we remove inline JavaScript/CSS:
+    # cleaned = re.sub(r"(?is)<(script|style).*?>.*?(</\1>)", "", html.strip())
+    cleaned = re.sub(r"(?is)<(script|style).*?>.*?(</\1>)", "", cleaned)
+    # Then we remove html comments. This has to be done before removing regular
+    # tags since comments can contain '>' characters.
+    cleaned = re.sub(r"(?s)<!--(.*?)-->[\n]?", "", cleaned)
+    # Next we can remove the remaining tags:
+    cleaned = re.sub(r"(?s)<.*?>", " ", cleaned)
+    # Finally, we deal with whitespace
+    cleaned = re.sub(r"&nbsp;", " ", cleaned)
+    cleaned = re.sub(r"  ", " ", cleaned)
+    cleaned = re.sub(r"  ", " ", cleaned)
+    # tidy up remove extra spaces
+    cleaned = " ".join(cleaned.split())
+
+    return cleaned
