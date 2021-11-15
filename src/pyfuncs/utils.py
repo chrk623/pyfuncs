@@ -263,7 +263,7 @@ def unescape(s):
     return s
 
 
-def clean_html(html, remove_ref = True):
+def clean_html(html):
     """
     Remove HTML markup from the given string.
     :param html: the HTML string to be cleaned
