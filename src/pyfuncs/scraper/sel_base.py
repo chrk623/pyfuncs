@@ -10,6 +10,11 @@ class ChromeBase:
         self.proxy = proxy
         self.headless = headless
         self.disable_image = disable_image
+        
+        if isinstance(extensions, str):
+            extensions = [extensions]
+        self.extensions = extensions
+        
         self.options = sw.ChromeOptions()
         self._prepare_driver()
         self._set_headless()
@@ -28,7 +33,12 @@ class ChromeBase:
         self.options.add_argument("--no-sandbox")
         self.options.add_argument("--window-size=%s" % "1920,1080")
         self.options.add_argument("--disable-dev-shm-usage")
-
+        
+        for ext in self.extensions:
+            self.options.add_extension(ext)
+        
+        self.prepare_driver()
+        
     def _set_headless(self):
         if self.headless:
             self.options.add_argument("--headless")

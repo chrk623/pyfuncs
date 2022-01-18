@@ -15,6 +15,7 @@ class ChromeUDSession(uc.Chrome, ChromeBase):
             proxy=None,
             headless=False,
             disable_image=False,
+            extensions=[],
             tz="America/Los_Angeles",  # set timezone to PST, earliest in US
             *args,
             **kwargs
@@ -24,6 +25,7 @@ class ChromeUDSession(uc.Chrome, ChromeBase):
             proxy=proxy,
             headless=False,
             disable_image=False,
+            extensions=extensions
         )
 
         if version_main is None:
