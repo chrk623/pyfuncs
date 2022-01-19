@@ -65,6 +65,7 @@ class ChromeSession(SW, ChromeBase):
             proxy=None,
             headless=False,
             disable_image=False,
+            extensions=[],
             tz="America/Los_Angeles",  # set timezone to PST, earliest in US
             *args,
             **kwargs
@@ -74,6 +75,7 @@ class ChromeSession(SW, ChromeBase):
             proxy=proxy,
             headless=headless,
             disable_image=disable_image,
+            extensions=extensions
         )
         super().__init__(
             executable_path=executable_path,
@@ -98,6 +100,7 @@ class ChromeWireSession(SWW, ChromeBase):
             proxy=None,
             headless=False,
             disable_image=False,
+            extensions=[],
             tz="America/Los_Angeles",  # set timezone to PST, earliest in US
             *args,
             **kwargs
@@ -107,6 +110,7 @@ class ChromeWireSession(SWW, ChromeBase):
             proxy=proxy,
             headless=headless,
             disable_image=disable_image,
+            extensions=extensions
         )
         super().__init__(
             executable_path=executable_path,
