@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 class ChromeBase:
-    def __init__(self, proxy=None, headless=False, disable_image=False):
+    def __init__(self, proxy=None, headless=False, disable_image=False, extensions=[]):
         self.proxy = proxy
         self.headless = headless
         self.disable_image = disable_image
