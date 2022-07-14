@@ -4,9 +4,10 @@ from datetime import datetime
 
 
 class Binance:
-    def __init__(self, api_key=""):
+    def __init__(self, api_key="", proxy={}):
         self.api_key = api_key
         self.s = rq.session()
+        self.s.proxies = proxy
 
     def _convert_timestampe(self, ts):
         return datetime.fromtimestamp(ts / 1000)
