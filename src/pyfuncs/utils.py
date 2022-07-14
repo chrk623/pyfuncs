@@ -296,3 +296,13 @@ def clean_html(html):
     cleaned = " ".join(cleaned.split())
 
     return cleaned
+
+
+def timestamp2date(timestamp, text=False):
+    timestamp_with_ms = timestamp
+    dt = datetime.fromtimestamp(timestamp_with_ms / 1000)
+    if text:
+        formatted_time = dt.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        return formatted_time
+
+    return dt
