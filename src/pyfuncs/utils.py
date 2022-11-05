@@ -306,3 +306,17 @@ def timestamp2date(timestamp, text=False):
         return formatted_time
 
     return dt
+
+def flatten_list(x):
+	return list(itertools.chain(*x))
+
+def split_df(df, num_chunks=None, chunk_size=None):
+    # num_chunks: number of chunks to return
+    # chunk_size: number of rows in each chunk
+    if num_chunks is not None and chunk_size is not None:
+        raise Exception("only provide ONE of num_chunk or chunk_size")
+
+    if chunk_size is not None:
+        num_chunks = np.ceil(df.shape[0] / chunk_size)
+
+    return np.array_split(df, num_chunks)
