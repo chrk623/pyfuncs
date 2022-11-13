@@ -79,7 +79,7 @@ class Webshare:
 
         return self.public_ip
 
-    def fetch_proxies_dict(self):
+    def fetch_proxies_dict(self, shuffle=True):
         proxies = self.fetch_proxies()
         if self.userpass:
             proxies = [
@@ -99,6 +99,7 @@ class Webshare:
 
                 } for p in proxies
             ]
-
-        random.shuffle(proxies)
+        if shuffle:
+            random.shuffle(proxies)
+            
         return proxies
