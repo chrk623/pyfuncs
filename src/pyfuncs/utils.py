@@ -1,5 +1,6 @@
 import re
 import os
+import time
 import json
 import logging
 import numpy as np
@@ -48,9 +49,28 @@ def create_logger():
     return logger
 
 
-def send_webook(wehbook_url, msg="hi"):
+def send_webhook(wehbook_url, msg="hi"):
     r = rq.post(wehbook_url, data={"content": msg})
     return r
+
+
+def keep_webhook(webhook_url, msg_fn=lambda: "test", sec_to_sleep=60):
+    """
+    msg_fn returns a string to be sent to webhook
+
+    example (track csv files):
+        from glob import glob
+        from pyfuncs.utils import keep_webhook
+        def msg_fn():
+            return str(len(glob(./test/*.csv)))
+        keep_webhook(msg_fn=msg_fn, sec_to_sleep=120)
+    """
+    while True:
+        send_webhook(
+            webhook_url=webhook_url,
+            msg=msg_fn()
+        )
+        time.sleep(sec_to_sleep)
 
 
 def proxy_location(proxy):
