@@ -62,7 +62,7 @@ def keep_webhook(webhook_url, msg_fn=lambda: "test", sec_to_sleep=60):
         from glob import glob
         from pyfuncs.utils import keep_webhook
         def msg_fn():
-            return str(len(glob(./test/*.csv)))
+            return str(len(glob("./test/*.csv")))
         keep_webhook(msg_fn=msg_fn, sec_to_sleep=120)
     """
     while True:
