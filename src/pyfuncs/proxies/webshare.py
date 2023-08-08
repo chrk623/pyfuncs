@@ -50,7 +50,7 @@ class Webshare:
         )
         return r.status_code
 
-    def fetch_proxies(self, region="US"):
+    def fetch_proxies(self, region=""):
         page = 1
         proxies = []
         next_page = True
@@ -79,8 +79,8 @@ class Webshare:
 
         return self.public_ip
 
-    def fetch_proxies_dict(self, shuffle=True):
-        proxies = self.fetch_proxies()
+    def fetch_proxies_dict(self, region="", shuffle=True):
+        proxies = self.fetch_proxies(region=region)
         if self.userpass:
             proxies = [
                 {
