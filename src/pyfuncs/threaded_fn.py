@@ -24,7 +24,9 @@ class ThreadedFn:
         self.logger = logging
         
     def _prepare_inputs(self):
-        inputs = np.array_split(self.inputs, self.num_threads)
+        # prevent type error
+        inputs = np.asarray(self.inputs, dtype="object")
+        inputs = np.array_split(inputs, self.num_threads)
         inputs = [x.tolist() for x in inputs]
         self.inputs = inputs
 
